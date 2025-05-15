@@ -91,7 +91,7 @@ component MUX_8_way_4_bit
     );
 end component;
 
-component Program_Rom
+component Programm_Rom
     Port (
         Mem_Sel : in STD_LOGIC_VECTOR (3 downto 0);
         Instruction_Bus : out STD_LOGIC_VECTOR (11 downto 0)
@@ -165,7 +165,7 @@ Add_Sub_0 : Add_Sub
 -- PC + 1
 Adder_4_Bit_0 : adder_4_bit
     Port map (
-        input => Reg_1,
+        input => Q,
         output => adder_out,
         C_out => C_out
     );
@@ -180,7 +180,7 @@ Program_Counter_0 : Program_Counter
     );
 
 -- ROM
-Program_ROM_0 : Program_Rom
+Program_ROM_0 : Programm_Rom
     Port map (
         Mem_Sel => Q,
         Instruction_Bus => Instruction_Bus
