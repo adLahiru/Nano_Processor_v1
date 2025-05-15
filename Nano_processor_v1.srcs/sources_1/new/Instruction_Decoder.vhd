@@ -47,49 +47,63 @@ end Instruction_Decoder;
 architecture Behavioral of Instruction_Decoder is
 
 begin
+ 
+process (Instruction_Data, Che_Jmp) 
+begin 
+ 
+    Reg_En<="000"; 
+    Val_Sel<='0'; 
+    Data_Out<="0000"; 
+    Reg_sel_1<="000"; 
+    Reg_sel_2<="000"; 
+    Ope_Sele<='0'; 
+    Jmp_Flag<='0'; 
+    Jmp_Adrs<="0000"; 
+     
+    -- add two registers and store it register 
+     
+    if(Instruction_Data(11)='0' and Instruction_Data(10)='0') then 
+        Reg_En<=Instruction_Data(9 downto 7); 
+        Val_Sel<='0'; 
+        Reg_sel_1<=Instruction_Data(9 downto 7); 
+        Reg_sel_2<=Instruction_Data(6 downto 4); 
+        Ope_Sele<='0'; 
+     
+    -- move numbers into relevant registers 
 
-Jmp_Flag <= '0';
-Val_Sel <= '0';
-
-process
-    begin
-    
-        if Instruction_Data (11 downto 10) = "10" then 
-            -- MOV
-            Val_Sel <= '1';
-            Reg_En <= Instruction_Data (9 downto 7);
-            Data_Out <= Instruction_Data (3 downto 0);
-            
-         elsif Instruction_Data (11 downto 10) = "00" then
-            -- ADD
-            Val_Sel <= '1';
-            Ope_Sele <= '0';
-            Reg_En <= Instruction_Data (9 downto 7);
-            Reg_Sel_1 <= Instruction_Data (9 downto 7);
-            Reg_En <= Instruction_Data (6 downto 4);
-            Reg_Sel_2 <= Instruction_Data (6 downto 4);
-                      
-         elsif Instruction_Data (11 downto 10) = "01" then
-            -- NEG
-            Val_Sel    <= '0';
-            Ope_Sele   <= '1';
-            Reg_Sel_1  <= Instruction_Data(6 downto 4);
-            Reg_Sel_2  <= Instruction_Data(9 downto 7);
-            Reg_En     <= Instruction_Data(6 downto 4);
-            Reg_En     <= Instruction_Data(9 downto 7);
-            
+     
+    elsif(Instruction_Data(11)='1' and Instruction_Data(10)='0') then 
+        Reg_En<=Instruction_Data(9 downto 7); 
+        Val_Sel<='1'; 
+        Data_Out<=Instruction_Data(3 downto 0); 
          
-         elsif (Instruction_Data (11 downto 10) = "11") then
-            -- JZR
-            Val_Sel    <= '0';
-
-            Reg_Sel_1 <= Instruction_Data (9 downto 7);
-            if (Che_Jmp = "0000") then
-                Jmp_Flag <= '1';
-                Jmp_Adrs <= Instruction_Data (3 downto 0);
-            end if;
-         end if;
-end process;
-
+         
+         
+    -- store negative number in register 
+     
+    elsif(Instruction_Data(11)='0' and Instruction_Data(10)='1') then 
+        Reg_En<=Instruction_Data(9 downto 7); 
+        Val_Sel<='0'; 
+        Reg_sel_1<="000"; 
+        Reg_sel_2<=Instruction_Data(9 downto 7); 
+        Ope_Sele<='1'; 
+ 
+    -- jump method 
+     
+    elsif(Instruction_Data(11)='1' and Instruction_Data(10)='1') then 
+        Reg_En<="000"; 
+        Reg_sel_1<=Instruction_Data(9 downto 7); 
+         
+         
+        if(Che_Jmp="0000") then 
+            Jmp_Adrs<=Instruction_Data(3 downto 0); 
+            Jmp_Flag<='1'; 
+        else 
+            Jmp_Flag<='0'; 
+         
+       end if; 
+    end if; 
+     
+end process; 
 
 end Behavioral;
