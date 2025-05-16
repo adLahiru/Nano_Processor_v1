@@ -33,32 +33,24 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 entity Programm_Rom is
-    Port ( Mem_Sel : in STD_LOGIC_VECTOR (3 downto 0);
+    Port ( Mem_Sel : in STD_LOGIC_VECTOR (2 downto 0);
            Instruction_Bus : out STD_LOGIC_VECTOR (11 downto 0));
 end Programm_Rom;
 
 architecture Behavioral of Programm_Rom is
 
 
-type rom_array is array (0 to 15) of STD_LOGIC_VECTOR(11 downto 0);
+type rom_array is array (0 to 7) of STD_LOGIC_VECTOR(11 downto 0);
 
 constant ROM : rom_array := (
-    "100010001100", -- 0: MOVI R1, 12       ; R1 ? 12
-    "100100000001", -- 1: MOVI R2, 1        ; R2 ? 1
-    "000011001010", -- 2: ADD R1, R2        ; R1 ? R1 + R2 (13)
-    "011110010101", -- 3: ADD R7, R1        ; R7 ? R7 + R1 (13)
-    "110000000101", -- 4: JZR R0, 5         ; If R0 == 0 ? jump to 5
-    "000000000000", -- 5: NOP
-    "100110000011", -- 6: MOVI R3, 3        ; R3 ? 3
-    "010110000000", -- 7: NEG R3            ; R3 ? -3 (2's complement)
-    "100001000101", -- 8: MOVI R0, 5        ; R0 ? 5
-    "110000000111", -- 9: JZR R0, 7         ; Not taken (R0 ? 0)
-    "100000001111", --10: MOVI R0, 15       ; R0 ? 15
-    "010000000000", --11: NEG R0            ; R0 ? -15
-    "110000001100", --12: JZR R0, 12        ; Not taken (R0 ? 0)
-    "100101000001", --13: MOVI R2, 1        ; R2 ? 1
-    "000011010010", --14: ADD R1, R2        ; R1 ? R1 + R2
-    "110010000011"  --15: JZR R1, 3         ; Jump if R1 == 0 ? unlikely
+    "101110000011", --MOVI R7,3 
+    "100010000001", --MOVI R1,1 
+    "010010000000",  --NEG R1 
+    "100100000011", --MOVI R2,3 
+    "000100010000", --ADD R2,R1 
+    "001110100000",  --ADD R7,R2 
+    "110100000110",  --JZR R2,6 
+    "110000000100"  -- JZR R0,4
 );
 
 

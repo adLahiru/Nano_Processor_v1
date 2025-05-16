@@ -1,14 +1,46 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 05/15/2025 07:04:50 PM
+-- Design Name: 
+-- Module Name: Nano_Processor - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
 
 entity Nano_Processor is
     Port (
         Clk : in STD_LOGIC;
         Res : in STD_LOGIC;
-        Processor_Output : out STD_LOGIC_VECTOR(3 downto 0);
+        Output : out STD_LOGIC_VECTOR(3 downto 0);
         Zero : out STD_LOGIC;
         Overflow : out STD_LOGIC;
-        Slow_Clk_LED : out STD_LOGIC
+        Slow_Clk_LED : out STD_LOGIC;
+        Anode : out STD_LOGIC_VECTOR ( 3 downto 0);
+        Seg : out STD_LOGIC_VECTOR ( 6 downto 0)
     );
 end Nano_Processor;
 
@@ -21,8 +53,7 @@ component Register_Bank
         Data : in STD_LOGIC_VECTOR (3 downto 0);
         Clk : in STD_LOGIC;
         Res : in STD_LOGIC;
-        Reg_0, Reg_1, Reg_2, Reg_3,
-        Reg_4, Reg_5, Reg_6, Reg_7 : out STD_LOGIC_VECTOR (3 downto 0)
+        Reg_0, Reg_1, Reg_2, Reg_3,Reg_4, Reg_5, Reg_6, Reg_7 : out STD_LOGIC_VECTOR (3 downto 0)
     );
 end component;
 
@@ -30,7 +61,7 @@ component Instruction_Decoder
     Port (
         Instruction_Data : in STD_LOGIC_VECTOR (11 downto 0);
         Jmp_Flag : out STD_LOGIC;
-        Jmp_Adrs : out STD_LOGIC_VECTOR (3 downto 0);
+        Jmp_Adrs : out STD_LOGIC_VECTOR (2 downto 0);
         Reg_Sel_1 : out STD_LOGIC_VECTOR (2 downto 0);
         Val_Sel : out STD_LOGIC;
         Data_Out : out STD_LOGIC_VECTOR (3 downto 0);
@@ -59,14 +90,14 @@ component adder_4_bit
     );
 end component;
 
-component Program_Counter
-    Port (
-        D : in STD_LOGIC_VECTOR(3 downto 0);
-        Clk : in STD_LOGIC;
-        Res : in STD_LOGIC;
-        Q : out STD_LOGIC_VECTOR (3 downto 0)
-    );
+component Programm_Counter_New
+    Port ( Jum_Flag : in STD_LOGIC;
+           Jum_Add : in STD_LOGIC_VECTOR (2 downto 0);
+           Adrs : out STD_LOGIC_VECTOR (2 downto 0);
+           Clk : in STD_LOGIC;
+           Res : in STD_LOGIC);
 end component;
+
 
 component Slow_Clk
     Port (
@@ -93,16 +124,22 @@ end component;
 
 component Programm_Rom
     Port (
-        Mem_Sel : in STD_LOGIC_VECTOR (3 downto 0);
+        Mem_Sel : in STD_LOGIC_VECTOR (2 downto 0);
         Instruction_Bus : out STD_LOGIC_VECTOR (11 downto 0)
     );
 end component;
 
+component LUT_16_7
+     Port ( address : in STD_LOGIC_VECTOR (3 downto 0);
+            data : out STD_LOGIC_VECTOR (6 downto 0)
+     );
+end component;
+
 -- Internal signals
 signal Clk_out, Jmp_Flag : STD_LOGIC;
-signal Reg_Sel_A, Reg_Sel_B : STD_LOGIC_VECTOR (2 downto 0);
+signal Reg_Sel_A, Reg_Sel_B, Jmp_Adrs , Q: STD_LOGIC_VECTOR (2 downto 0);
 signal Val_Sel, Ope_Sele : STD_LOGIC;
-signal Data, Data_Out, Jmp_Adrs, A, B, S, D, Q, adder_out : STD_LOGIC_VECTOR (3 downto 0);
+signal Data, Data_Out, A, B, S, D, adder_out : STD_LOGIC_VECTOR (3 downto 0);
 signal Reg_0, Reg_1, Reg_2, Reg_3, Reg_4, Reg_5, Reg_6, Reg_7 : STD_LOGIC_VECTOR (3 downto 0);
 signal Instruction_Bus : STD_LOGIC_VECTOR (11 downto 0);
 signal Reg_En : STD_LOGIC_VECTOR (2 downto 0);
@@ -162,21 +199,14 @@ Add_Sub_0 : Add_Sub
         OverFlow => Overflow
     );
 
--- PC + 1
-Adder_4_Bit_0 : adder_4_bit
-    Port map (
-        input => Q,
-        output => adder_out,
-        C_out => C_out
-    );
-
 -- Program Counter
-Program_Counter_0 : Program_Counter
+Program_Counter_0 : Programm_Counter_New
     Port map (
-        D => D,
+        Jum_Flag => Jmp_Flag,
         Clk => Clk_out,
         Res => Res,
-        Q => Q
+        Jum_Add => Jmp_Adrs,
+        Adrs => Q
     );
 
 -- ROM
@@ -184,15 +214,6 @@ Program_ROM_0 : Programm_Rom
     Port map (
         Mem_Sel => Q,
         Instruction_Bus => Instruction_Bus
-    );
-
--- PC Update Logic
-MUX_2_Way_4_Bit_0 : MUX_2_way_4_bit
-    Port map (
-        I0 => adder_out,
-        I1 => Jmp_Adrs,
-        S => Jmp_Flag,
-        Y => D
     );
 
 -- Data Selection
@@ -220,7 +241,13 @@ MUX_8_Way_4_Bit_B : MUX_8_way_4_bit
         S => Reg_Sel_B, Y => B
     );
 
+segment_lookup : LUT_16_7
+    Port map (
+        address => Reg_7  ,
+        Data => Seg );
+
 -- Final Output
-Processor_Output <= S;
+Output <= Reg_7;
+Anode <= "1110";
 
 end Behavioral;

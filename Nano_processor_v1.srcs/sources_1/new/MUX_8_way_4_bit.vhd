@@ -46,28 +46,26 @@ end MUX_8_way_4_bit;
 
 architecture Behavioral of MUX_8_way_4_bit is
 
+
+type instru_array is array (0 to 7) of STD_LOGIC_VECTOR(11 downto 0);
+
 begin
 
-process(I0,I1,I2,I3,I4,I5,I6,I7,S)
+process(S)
 begin
-    if(S="000") then 
-        Y<=I0; 
-    elsif(S="001") then 
-        Y<=I1; 
-    elsif(S="010") then 
-        Y<=I2; 
-    elsif(S="011") then 
-        Y<=I3; 
-    elsif(S="100") then 
-        Y<=I4; 
-    elsif(S="101") then 
-        Y<=I5; 
-    elsif(S="110") then 
-        Y<=I6; 
-    elsif(S="111") then 
-        Y<=I7; 
-    end if;
+    case S is
+        when "000" => Y <= I0;
+        when "001" => Y <= I1;
+        when "010" => Y <= I2;
+        when "011" => Y <= I3;
+        when "100" => Y <= I4;
+        when "101" => Y <= I5;
+        when "110" => Y <= I6;
+        when "111" => Y <= I7;
+        when others => Y <= (others => '0'); -- default case
+    end case;
 end process;
+
 
 
 

@@ -40,7 +40,7 @@ architecture Behavioral of TB_Instruction_Decoder is
 component Instruction_Decoder 
     Port ( Instruction_Data : in STD_LOGIC_VECTOR (11 downto 0);
            Jmp_Flag : out STD_LOGIC;
-           Jmp_Adrs : out STD_LOGIC_VECTOR (3 downto 0);
+           Jmp_Adrs : out STD_LOGIC_VECTOR (2 downto 0);
            Reg_Sel_1 : out STD_LOGIC_VECTOR (2 downto 0);
            Val_Sel : out STD_LOGIC;
            Data_Out : out STD_LOGIC_VECTOR (3 downto 0);
@@ -51,8 +51,8 @@ component Instruction_Decoder
 end component;
 
 signal instruction_bus:std_logic_vector(11 downto 0); 
-signal Reg_chek_jump,immediate_value,address_jump :STD_LOGIC_VECTOR (3 downto 0); 
-signal Reg_sel_1,Reg_sel_2,Reg_ena : STD_LOGIC_VECTOR (2 downto 0); 
+signal Reg_chek_jump,immediate_value :STD_LOGIC_VECTOR (3 downto 0); 
+signal Reg_sel_1,Reg_sel_2,Reg_ena ,address_jump : STD_LOGIC_VECTOR (2 downto 0); 
 signal Add_Sub_sel,jump_flag,load_sel : STD_LOGIC; 
 
 begin

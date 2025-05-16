@@ -38,13 +38,12 @@ end TB_Programm_rom;
 architecture Behavioral of TB_Programm_rom is
     component Programm_Rom
         Port (
-            Mem_Sel : in STD_LOGIC_VECTOR (3 downto 0);
+            Mem_Sel : in STD_LOGIC_VECTOR (2 downto 0);
             Instruction_Bus : out STD_LOGIC_VECTOR (11 downto 0)
         );
     end component;
     
-    
-    signal ROM_sel : STD_LOGIC_VECTOR (3 downto 0);
+    signal ROM_sel : STD_LOGIC_VECTOR (2 downto 0);  -- Fixed to 3-bit
     signal instruction : STD_LOGIC_VECTOR (11 downto 0);
     
 begin
@@ -55,19 +54,32 @@ begin
             Instruction_Bus => instruction
         );
 
-process begin 
-    ROM_sel<="0111"; 
-    wait for 100ns; 
-     
-    ROM_sel<="0010"; 
-    wait for 100ns; 
-     
-    ROM_sel<="0101"; 
-    wait for 100ns; 
-     
-    ROM_sel<="0011"; 
-    wait; 
-     
-end process; 
+    process 
+    begin 
+        ROM_sel <= "000";  -- MOVI R7,3
+        wait for 100 ns;
+
+        ROM_sel <= "001";  -- MOVI R1,1
+        wait for 100 ns;
+
+        ROM_sel <= "010";  -- NEG R1
+        wait for 100 ns;
+
+        ROM_sel <= "011";  -- MOVI R2,3
+        wait for 100 ns;
+
+        ROM_sel <= "100";  -- ADD R2,R1
+        wait for 100 ns;
+
+        ROM_sel <= "101";  -- ADD R7,R2
+        wait for 100 ns;
+
+        ROM_sel <= "110";  -- JZR R2,6
+        wait for 100 ns;
+
+        ROM_sel <= "111";  -- JZR R0,4
+        wait;
+
+    end process;
 
 end Behavioral;

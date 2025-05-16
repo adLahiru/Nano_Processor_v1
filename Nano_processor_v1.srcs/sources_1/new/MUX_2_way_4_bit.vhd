@@ -42,7 +42,7 @@ architecture Behavioral of MUX_2_way_4_bit is
 
 begin
 
-process(I0,I1,S)
+process(S)
 begin
     if(S='0') then 
         Y<=I0; 

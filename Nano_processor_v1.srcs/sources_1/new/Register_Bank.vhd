@@ -74,7 +74,7 @@ Decoder : Decoder_3_to_8
 Reg0 : Reg
     port map (
         En => E(0),
-        D => Data,
+        D => "0000",
         Clk => Clk,
         Res => Res,
         Q => Reg_0);

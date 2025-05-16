@@ -10,15 +10,18 @@ component Nano_Processor
     Port (
         Clk : in STD_LOGIC;
         Res : in STD_LOGIC;
-        Processor_Output : out STD_LOGIC_VECTOR(3 downto 0);
+        Output : out STD_LOGIC_VECTOR(3 downto 0);
         Zero : out STD_LOGIC;
         Overflow : out STD_LOGIC;
-        Slow_Clk_LED : out STD_LOGIC
+        Slow_Clk_LED : out STD_LOGIC;
+        Anode : out STD_LOGIC_VECTOR ( 3 downto 0);
+        Seg : out STD_LOGIC_VECTOR ( 6 downto 0)
     );
 end component;
 
 signal Clk, Res, Slow_Clk_LED, Zero, Overflow : STD_LOGIC;
-signal Processor_Output : STD_LOGIC_VECTOR(3 downto 0);
+signal Processor_Output, Anode  : STD_LOGIC_VECTOR(3 downto 0);
+signal Seg  : STD_LOGIC_VECTOR(6 downto 0);
 
 begin
 
@@ -26,10 +29,13 @@ UUT: Nano_Processor
     Port map (
         Clk => Clk,
         Res => Res,
-        Processor_Output => Processor_Output,
+        Output => Processor_Output,
         Zero => Zero,
         Overflow => Overflow,
-        Slow_Clk_LED => Slow_Clk_LED
+        Slow_Clk_LED => Slow_Clk_LED,
+        Anode => Anode,
+        Seg => Seg
+        
     );
 
 -- Clock Generation

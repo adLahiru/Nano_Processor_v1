@@ -36,73 +36,97 @@ entity TB_ProgramCounter is
 end TB_ProgramCounter;
 
 architecture Behavioral of TB_ProgramCounter is
-component Program_Counter
+
+    component Programm_Counter_New 
     Port (
-        D : in STD_LOGIC_VECTOR(3 downto 0);
-        Clk : in STD_LOGIC;
-        Res : in STD_LOGIC;
-        Q : out STD_LOGIC_VECTOR (3 downto 0));
+        Jum_Flag : in STD_LOGIC;
+        Jum_Add  : in STD_LOGIC_VECTOR (2 downto 0);
+        Adrs     : out STD_LOGIC_VECTOR (2 downto 0);
+        Clk      : in STD_LOGIC;
+        Res      : in STD_LOGIC
+    );
 end component;
 
-signal D, Q: std_logic_vector(3 downto 0);
-signal Clk, Res: std_logic;
+signal Clk      : std_logic := '0';
+signal Res      : std_logic := '0';
+signal Jum_Flag : std_logic := '0';
+signal Jum_Add  : std_logic_vector(2 downto 0) := "000";
+signal Adrs     : std_logic_vector(2 downto 0);
+
+-- Clock process: 20 ns period (10 ns high, 10 ns low)
+constant CLK_PERIOD : time := 20 ns;
 
 begin
 
-UUT: Program_Counter
-    PORT MAP
-        (D => D,
-         Clk => Clk,
-         Res => Res,
-         Q => Q);
+-- Instantiate the Program Counter
+UUT: Programm_Counter_New
+    port map (
+        Jum_Flag => Jum_Flag,
+        Jum_Add  => Jum_Add,
+        Adrs     => Adrs,
+        Clk      => Clk,
+        Res      => Res
+    );
 
-
-process
-    begin
-        
+-- Clock generation
+clk_process : process
+begin
+    while true loop
         Clk <= '0';
-        WAIT FOR 10ns;
-        
+        wait for CLK_PERIOD / 2;
         Clk <= '1';
-        WAIT FOR 10ns;
-        
+        wait for CLK_PERIOD / 2;
+    end loop;
 end process;
 
-process 
-    begin
-        
-        Res <= '1';
-        D <= "0010";
-        WAIT FOR 20ns;
-        
-        Res <= '0';
-        D <= "0001";
-        WAIT FOR 50ns;
-        
-        Res <= '0';
-        D <= "0010";
-        WAIT FOR 50ns;
-        
-        Res <= '0';
-        D <= "0011";
-        WAIT FOR 50ns;
+-- Stimulus process
+stim_proc: process
+begin
+    -- Reset and start
+    Res <= '1';
+    wait for CLK_PERIOD;
+    Res <= '0';
+    wait for CLK_PERIOD;
 
-        D <= "0110";
-        WAIT FOR 100ns;
+    -- Let it increment naturally for 4 cycles
+    wait for 4 * CLK_PERIOD;
 
-        D <= "0101";
-        WAIT FOR 50ns;
-        
-        Res <= '1';
-        D <= "0111";
-        WAIT FOR 20ns;
-        
-        
-        Res <= '0';
-        D <= "0111";
-        WAIT FOR 50ns;
-        
+    -- Test jump to address 3
+    Jum_Add <= "110";
+    Jum_Flag <= '1';
+    wait for CLK_PERIOD;
+    Jum_Flag <= '0';
+
+    -- Let it increment again for 3 cycles
+    wait for 3 * CLK_PERIOD;
+
+    -- Jump to 111
+    Jum_Add <= "111";
+    Jum_Flag <= '1';
+    wait for CLK_PERIOD;
+    Jum_Flag <= '0';
+
+    -- Let it increment again for 2 cycles (should wrap around to 000 if 3-bit overflow occurs)
+    wait for 2 * CLK_PERIOD;
+
+    -- Jump to 000
+    Jum_Add <= "000";
+    Jum_Flag <= '1';
+    wait for CLK_PERIOD;
+    Jum_Flag <= '0';
+
+    -- Reset in the middle of the operation
+    wait for CLK_PERIOD;
+    Res <= '1';
+    wait for CLK_PERIOD;
+    Res <= '0';
+
+    -- Final incrementing
+    wait for 3 * CLK_PERIOD;
+
+    -- Finish simulation
+    wait;
 end process;
-   
 
 end Behavioral;
+   

@@ -68,7 +68,7 @@ process
 begin
 
     -- Assign static values to all 8 inputs
-    I0 <= "0000";
+    I0 <= "1111";
     I1 <= "0001";
     I2 <= "0010";
     I3 <= "0011";
