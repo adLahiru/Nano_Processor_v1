@@ -33,11 +33,16 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity Display_out is
     Port ( S_7Seg : out STD_LOGIC_VECTOR (6 downto 0);
-           S_in : in STD_LOGIC_VECTOR (3 downto 0);
+           S_in : in STD_LOGIC_VECTOR (7 downto 0);
            Anode : out STD_LOGIC_VECTOR (3 downto 0));
 end Display_out;
 
 architecture Behavioral of Display_out is
+
+COMPONENT LUT_16_7
+ Port ( address : in STD_LOGIC_VECTOR (3 downto 0);
+        data : out STD_LOGIC_VECTOR (6 downto 0));
+end COMPONENT;
 
 begin
 
