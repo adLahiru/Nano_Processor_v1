@@ -12,7 +12,7 @@ This is a minimalist 4-bit nano processor designed for educational and experimen
 - **Core Instructions:**
   - `ADD` – Performs 4-bit addition
   - `MOVE` – Transfers data between registers
-  - `NEGATION` – Computes two’s complement of a value
+  - `NEGATION` – Computes the two’s complement of a value
   - `JUMP IF ZERO` – Conditional jump based on zero flag
 - **Implemented Components:**
   - Register Bank
@@ -45,12 +45,6 @@ This is a minimalist 4-bit nano processor designed for educational and experimen
 
 ---
 
-## 📷 Screenshots / Waveforms
-
-_(Optional: Add simulation waveforms or block diagrams here)_
-
----
-
 ## 🔧 Getting Started
 
 To simulate the processor:
@@ -58,7 +52,7 @@ To simulate the processor:
 1. Clone the repository.
 2. Open the project in your VHDL simulator (ModelSim, GHDL, etc.).
 3. Compile all VHDL files.
-4. Run `testbench.vhd` to observe functionality.
+4. Run `Nanoprocessor.vhd` to observe functionality.
 
 ---
 
@@ -70,11 +64,14 @@ This project is open-source and free to use for educational purposes.
 
 ## 👤 Author
 
-Created by Lahiru Dilshan  
-Scout | Rahula College | Computer Engineering Enthusiast
+Created by,
+  1. Lahiru Dilshan
+  2. Thilokya Angeesa
+  3. Sandaru Vidushan
+  4. Sandeni Vithanage
 
 ---
 
 ## 📌 Note
 
-This is Version `v1.0.0`. Further instructions and functionality (like branching, memory, or extended instructions) may be added in future versions.
+This is Version `v1.0.0`. Future versions may add further instructions and functionality (like branching, memory, or extended instructions).
